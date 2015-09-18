@@ -1,0 +1,31 @@
+from selenium import webdriver
+import time
+import ctypes
+from bs4 import BeautifulSoup as bs
+
+driver = webdriver.Firefox()
+
+def Mbox(title, text, style):
+    ctypes.windll.user32.MessageBoxA(0, text, title, style)
+
+def search_for_ticket():
+    source = driver.page_source
+    soup = bs(source, 'html5lib')
+    table = soup.find('tbody')
+    location = table.find_all('tr', {'class': 'row-5 odd'})
+    print location
+    if 'href' in str(location):
+        print 'Tickets are on sale!'
+        Mbox('Boruto: Naruto the Movie', 'Tickets are on sale!', 0)
+    else:
+        print 'try again'
+        time.sleep(600)
+        driver.refresh()
+        time.sleep(5)
+        search_for_ticket()
+
+
+driver.get('http://www.elevenarts.net/th_gallery/boruto-naruto-the-movie/')
+time.sleep(5)
+search_for_ticket()
+
